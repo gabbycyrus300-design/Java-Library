@@ -1,0 +1,50 @@
+import java.util.Arrays;
+
+public class SensorDataLogger {
+    private static final int MAX_READINGS = 1000;
+    private final double[] sensorReadings = new double[MAX_READINGS];
+    private int nextIndex = 0;         // Where to write the next reading
+    private int readingCount = 0;      // Total number of readings added (capped at MAX_READINGS)
+
+    // Adds a new sensor reading, overwriting the oldest if full
+    public synchronized void addReading(double value) {
+        sensorReadings[nextIndex] = value;
+        nextIndex = (nextIndex + 1) % MAX_READINGS;
+        if (readingCount < MAX_READINGS) {
+            readingCount++;
+        }
+    }
+
+    // Returns readings in order from oldest to newest
+    public synchronized double[] getReadings() {
+        double[] result = new double[readingCount];
+        for (int i = 0; i < readingCount; i++) {
+            int index = (nextIndex + i) % MAX_READINGS;
+            result[i] = sensorReadings[index];
+        }
+        return result;
+    }
+
+    // Returns the average of all current readings
+    public synchronized double getAverage() {
+        if (readingCount == 0) return 0.0;
+
+        double sum = 0;
+        for (int i = 0; i < readingCount; i++) {
+            sum += sensorReadings[i];
+        }
+        return sum / readingCount;
+    }
+
+    // Clears all sensor data
+    public synchronized void clear() {
+        nextIndex = 0;
+        readingCount = 0;
+        Arrays.fill(sensorReadings, 0.0);
+    }
+
+    // Returns the number of readings stored
+    public synchronized int size() {
+        return readingCount;
+    }
+}
