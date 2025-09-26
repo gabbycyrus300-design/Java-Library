@@ -1,0 +1,17 @@
+public class ImageProcessor {
+    private int[][] pixelArray;
+
+    // Constructor to initialize the pixel array with given width and height
+    public ImageProcessor(int width, int height) {
+        pixelArray = new int[height][width];
+    }
+
+    // Applies a filter by multiplying each pixel value by the given filter value
+    public void applyFilter(int filterValue) {
+        for (int row = 0; row < pixelArray.length; row++) {
+            for (int col = 0; col < pixelArray[row].length; col++) {
+                pixelArray[row][col] *= filterValue; // O(1) access
+            }
+        }
+    }
+}
